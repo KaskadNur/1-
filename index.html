@@ -26,6 +26,26 @@
             border-bottom: 1px solid rgba(0,212,255,0.25); padding-bottom: 6px;
             display: flex; align-items: center; gap: 8px;
         }
+        .section-title {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+        .section-title:hover {
+            color: #38bdf8;
+            border-color: rgba(56,189,248,0.4);
+            padding-left: 8px;
+        }
+        .section-title::before {
+            content: "▶ ";
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+            display: inline-block;
+        }
+        .section-title.expanded::before {
+            transform: rotate(90deg);
+        }
+
         .card {
             background: rgba(255,255,255,0.04); backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
@@ -122,19 +142,98 @@
             .info-table th, .info-table td { padding: 6px 8px; }
             .code-block { font-size: 0.72rem; padding: 10px; }
         }
+
+        .nav-panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+        .nav-search {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            outline: none;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .nav-search:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0,212,255,0.15);
+        }
+        .nav-search::placeholder { color: #64748b; }
+        .nav-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .nav-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: #94a3b8;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .nav-tag:hover {
+            background: rgba(0,212,255,0.1);
+            color: #00d4ff;
+            border-color: rgba(0,212,255,0.3);
+        }
+        .nav-tag.active {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #fff;
+            border-color: transparent;
+            font-weight: 600;
+        }
+        .card.hidden { display: none !important; }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-size: 1rem;
+            display: none;
+        }
+        .no-results.show { display: block; }
     </style>
 <base target="_blank">
 </head>
 <body>
     <div class="container">
         <h1>📚 Шпаргалка: 1С Платформа</h1>
-        <p class="subtitle">Нажми на карточку — откроется всё. Нажми ещё раз — свернётся.</p>
+        <p class="subtitle">Нажми на карточку — откроется всё. Нажми ещё раз — свернётся. Или используй поиск/фильтр ниже 👇</p>
+
+        <div class="nav-panel">
+            <input type="text" class="nav-search" id="searchBox" placeholder="🔍 Поиск по шпаргалке..." onkeyup="filterCards()">
+            <div class="nav-tags">
+                <button class="nav-tag active" onclick="filterCategory('all', this)">Все</button>
+                <button class="nav-tag" onclick="filterCategory('язык', this)">🔤 Язык</button>
+                <button class="nav-tag" onclick="filterCategory('модули', this)">📦 Модули</button>
+                <button class="nav-tag" onclick="filterCategory('коллекции', this)">🗂️ Коллекции</button>
+                <button class="nav-tag" onclick="filterCategory('объекты', this)">🏛️ Объекты</button>
+                <button class="nav-tag" onclick="filterCategory('регистры', this)">📁 Регистры</button>
+                <button class="nav-tag" onclick="filterCategory('запросы', this)">🔍 Запросы</button>
+                <button class="nav-tag" onclick="filterCategory('скд', this)">📊 СКД</button>
+                <button class="nav-tag" onclick="filterCategory('сравнения', this)">📊 Сравнения</button>
+            </div>
+        </div>
+        <div class="no-results" id="noResults">😕 Ничего не найдено. Попробуй другой запрос.</div>
+
 
         <!-- ==================== ЯЗЫК И СИНТАКСИС ==================== -->
-        <div class="section-title">🔤 Язык и синтаксис</div>
+        <div class="section-title" onclick="toggleSection(this)">🔤 Язык и синтаксис</div>
 
         <!-- Циклы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="язык" id="cycles" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c1">🔄</div>
                 <div class="card-title-group">
@@ -189,7 +288,7 @@
         </div>
 
         <!-- Условия -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="язык" id="conditions" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c2">🔀</div>
                 <div class="card-title-group">
@@ -236,7 +335,7 @@
         </div>
 
         <!-- Директивы компиляции -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="язык" id="directives" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c3">⚙️</div>
                 <div class="card-title-group">
@@ -279,7 +378,7 @@
         </div>
 
         <!-- Экспортные методы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="язык" id="export-methods" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c4">📤</div>
                 <div class="card-title-group">
@@ -316,10 +415,10 @@
         </div>
 
         <!-- ==================== МОДУЛИ ==================== -->
-        <div class="section-title">📦 Модули</div>
+        <div class="section-title" onclick="toggleSection(this)">📦 Модули</div>
 
         <!-- Виды модулей -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="модули" id="module-types" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c5">📑</div>
                 <div class="card-title-group">
@@ -351,7 +450,7 @@
         </div>
 
         <!-- Типовая структура модуля -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="модули" id="module-structure" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c6">🏗️</div>
                 <div class="card-title-group">
@@ -406,7 +505,7 @@
         </div>
 
         <!-- Назначение модуля объекта и менеджера -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="модули" id="object-vs-manager" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c7">⚡</div>
                 <div class="card-title-group">
@@ -456,7 +555,7 @@
         </div>
 
         <!-- Общие модули -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="модули" id="common-modules" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c8">🌐</div>
                 <div class="card-title-group">
@@ -500,10 +599,10 @@
         </div>
 
         <!-- ==================== КОЛЛЕКЦИИ ==================== -->
-        <div class="section-title">🗂️ Универсальные коллекции значений</div>
+        <div class="section-title" onclick="toggleSection(this)">🗂️ Универсальные коллекции значений</div>
 
         <!-- Универсальные коллекции -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="коллекции" id="collections" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c9">📚</div>
                 <div class="card-title-group">
@@ -563,10 +662,10 @@
         </div>
 
         <!-- ==================== ОБЪЕКТЫ ==================== -->
-        <div class="section-title">🏛️ Объекты конфигурации</div>
+        <div class="section-title" onclick="toggleSection(this)">🏛️ Объекты конфигурации</div>
 
         <!-- Объекты (общие, прикладные, подчиненные) -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="config-objects" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c10">🧩</div>
                 <div class="card-title-group">
@@ -593,7 +692,7 @@
         </div>
 
         <!-- Константы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="constants" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c11">🔒</div>
                 <div class="card-title-group">
@@ -633,7 +732,7 @@
         </div>
 
         <!-- Справочники -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="catalogs" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c12">📁</div>
                 <div class="card-title-group">
@@ -684,7 +783,7 @@
         </div>
 
         <!-- Документы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="documents" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c1">📄</div>
                 <div class="card-title-group">
@@ -727,7 +826,7 @@
         </div>
 
         <!-- Журналы документов -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="document-journals" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c2">📰</div>
                 <div class="card-title-group">
@@ -756,7 +855,7 @@
         </div>
 
         <!-- Формы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="forms" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c3">🖥️</div>
                 <div class="card-title-group">
@@ -794,10 +893,10 @@
         </div>
 
         <!-- ==================== РЕГИСТРЫ ==================== -->
-        <div class="section-title">📁 Регистры</div>
+        <div class="section-title" onclick="toggleSection(this)">📁 Регистры</div>
 
         <!-- Регистр сведений детально -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="регистры" id="info-register-types" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c4">📋</div>
                 <div class="card-title-group">
@@ -840,7 +939,7 @@
         </div>
 
         <!-- Регистр накоплений -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="регистры" id="accumulation-register" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c5">📦</div>
                 <div class="card-title-group">
@@ -871,7 +970,7 @@
         </div>
 
         <!-- Регистр бухгалтерии -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="регистры" id="accounting-register" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c6">⚖️</div>
                 <div class="card-title-group">
@@ -903,7 +1002,7 @@
         </div>
 
         <!-- Регистр расчёта -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="регистры" id="calculation-register" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c7">🧮</div>
                 <div class="card-title-group">
@@ -934,10 +1033,10 @@
         </div>
 
         <!-- ==================== ДОПОЛНИТЕЛЬНЫЕ ОБЪЕКТЫ ==================== -->
-        <div class="section-title">🧪 Дополнительные объекты</div>
+        <div class="section-title" onclick="toggleSection(this)">🧪 Дополнительные объекты</div>
 
         <!-- Функциональные опции -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="functional-options" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c8">🔧</div>
                 <div class="card-title-group">
@@ -980,7 +1079,7 @@
         </div>
 
         <!-- Планы видов характеристик -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="объекты" id="charts-of-characteristic-types" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c9">📐</div>
                 <div class="card-title-group">
@@ -1020,10 +1119,10 @@
         </div>
 
         <!-- ==================== ЗАПРОСЫ ==================== -->
-        <div class="section-title">🔍 Запросы и оптимизация</div>
+        <div class="section-title" onclick="toggleSection(this)">🔍 Запросы и оптимизация</div>
 
         <!-- Запросы -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="запросы" id="queries" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c10">🔍</div>
                 <div class="card-title-group">
@@ -1070,7 +1169,7 @@
         </div>
 
         <!-- Методы оптимизации запросов -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="запросы" id="query-optimization" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c11">⚡</div>
                 <div class="card-title-group">
@@ -1114,10 +1213,10 @@
         </div>
 
         <!-- ==================== СРАВНЕНИЯ ==================== -->
-        <div class="section-title">📊 Сравнительные таблицы</div>
+        <div class="section-title" onclick="toggleSection(this)">📊 Сравнительные таблицы</div>
 
         <!-- Сравнение регистров -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="запросы" id="join-types" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c12">📊</div>
                 <div class="card-title-group">
@@ -1152,7 +1251,7 @@
         </div>
 
         <!-- Сравнение коллекций -->
-        <div class="card" onclick="toggleCard(this)">
+        <div class="card" data-category="запросы" id="union-vs-join" onclick="toggleCard(this)">
             <div class="card-header">
                 <div class="card-icon c1">🗂️</div>
                 <div class="card-title-group">
@@ -1186,15 +1285,512 @@
                 </div>
             </div>
         </div>
+
+        <!-- ==================== ЗАПРОСЫ: ДОПОЛНИТЕЛЬНО ==================== -->
+        <div class="section-title" onclick="toggleSection(this)">🔗 Соединения и объединения</div>
+
+        <!-- Виды соединений -->
+        <div class="card" data-category="скд" id="skd" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-icon c10">📈</div>
+                <div class="card-title-group">
+                    <div class="card-title">Система компоновки данных (СКД)</div>
+                    <div class="card-super-short">Мощнейший декларативный механизм построения отчётов без программирования: наборы данных, связи, поля, группировки, ресурсы, параметры, макеты, варианты, условное оформление.</div>
+                </div>
+                <div class="card-arrow">▼</div>
+            </div>
+            <div class="card-body">
+                <div class="card-short">
+                    <b>СКД</b> — это фреймворк для создания отчётов, где разработчик описывает источники данных и структуру, а платформа автоматически строит запросы, выполняет их и формирует результат. Пользователь может сам настраивать группировки, отборы, сортировку без изменения кода. СКД состоит из <b>схемы</b> (описание данных), <b>компоновщика настроек</b> (настройки отчёта), <b>процессора компоновки</b> (выполнение) и <b>процессора вывода</b> (отображение).
+                </div>
+                <div class="card-full">
+                    <h3>📊 Архитектура СКД</h3>
+                    <table class="info-table">
+                        <tr><th>Компонент</th><th>Назначение</th><th>Класс в 1С</th></tr>
+                        <tr><td><b>Схема компоновки данных</b></td><td>Описание источников данных, полей, связей, ресурсов, параметров, макетов</td><td>СхемаКомпоновкиДанных</td></tr>
+                        <tr><td><b>Компоновщик настроек</b></td><td>Хранит и управляет настройками отчёта (группировки, отборы, параметры)</td><td>КомпоновщикНастроекКомпоновкиДанных</td></tr>
+                        <tr><td><b>Процессор компоновки</b></td><td>Выполняет схему с учётом настроек: строит запросы, получает данные, вычисляет ресурсы</td><td>ПроцессорКомпоновкиДанных</td></tr>
+                        <tr><td><b>Процессор вывода</b></td><td>Форматирует результат в табличный документ, диаграмму, коллекцию значений</td><td>ПроцессорВыводаРезультатаКомпоновкиДанныхВТабличныйДокумент</td></tr>
+                    </table>
+
+                    <h3>📊 Наборы данных</h3>
+                    <table class="info-table">
+                        <tr><th>Набор</th><th>Описание</th><th>Когда использовать</th><th>Пример</th></tr>
+                        <tr><td><b>Запрос</b></td><td>Источник — текст запроса на языке 1С. Может содержать параметры, виртуальные таблицы</td><td>Основной способ. Данные из БД, регистров, справочников</td><td>ВЫБРАТЬ Номенклатура, Сумма ИЗ РегистрНакопления.Продажи.Обороты</td></tr>
+                        <tr><td><b>Объект</b></td><td>Источник — таблица значений или дерево значений, переданное программно через внешние данные</td><td>Когда данные готовятся в коде (сложные расчёты, внешние источники, обработка перед выводом)</td><td>Таблица значений с результатами расчёта зарплаты</td></tr>
+                        <tr><td><b>Объединение</b></td><td>Объединяет несколько наборов данных в один (аналог UNION). Поля должны совпадать по типам</td><td>Когда нужно слить разнородные источники в один отчёт</td><td>Продажи из розницы + продажи из опта = общие продажи</td></tr>
+                    </table>
+
+                    <h3>📊 Поля, вычисляемые поля и ресурсы</h3>
+                    <table class="info-table">
+                        <tr><th>Элемент</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Поля набора данных</b></td><td>Колонки, которые возвращает запрос или объект. Автоматически определяются из текста запроса</td><td>Номенклатура, Количество, Сумма</td></tr>
+                        <tr><td><b>Вычисляемые поля</b></td><td>Поля, значение которых вычисляется по формуле из других полей. Вычисляются на этапе вывода</td><td>СуммаНДС = Сумма * СтавкаНДС / 100; СебестоимостьЕдиницы = Себестоимость / Количество</td></tr>
+                        <tr><td><b>Ресурсы</b></td><td>Агрегатные поля, по которым считаются итоги. Для каждого ресурса указывается агрегатная функция</td><td>КоличествоОборот — функция Сумма; СредняяЦена — функция Среднее</td></tr>
+                        <tr><td><b>Роли полей</b></td><td>Особые свойства полей: период, период секунда, период день, период месяц, начало периода, конец периода, родитель, итог по иерархии</td><td>ПериодДень позволяет группировать по дням; Родитель — для иерархических справочников</td></tr>
+                    </table>
+
+                    <h3>📊 Связи наборов данных</h3>
+                    <table class="info-table">
+                        <tr><th>Параметр связи</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Источник / Приёмник</b></td><td>Какие наборы связываем между собой</td><td>НаборПродажи → НаборОстатки</td></tr>
+                        <tr><td><b>Выражение источника / приёмника</b></td><td>Поля, по которым связываем</td><td>Продажи.Номенклатура = Остатки.Номенклатура</td></tr>
+                        <tr><td><b>Обязательная связь</b></td><td>Если включено — строки без совпадения не попадают в результат (аналог ВНУТРЕННЕГО соединения)</td><td>Если НЕ обязательная — аналог ЛЕВОГО соединения</td></tr>
+                        <tr><td><b>Условие связи</b></td><td>Дополнительное логическое условие на соединение</td><td>Продажи.Склад = Остатки.Склад</td></tr>
+                        <tr><td><b>Параметр</b></td><td>Связь через параметр запроса (например, период среза)</td><td>Период среза остатков = Период продажи</td></tr>
+                    </table>
+
+                    <h3>📊 Настройки отчёта (структура)</h3>
+                    <table class="info-table">
+                        <tr><th>Элемент</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Группировка</b></td><td>Группировка строк или колонок по полям. Может быть иерархической</td><td>Группировка по Организации → Складу → Номенклатуре</td></tr>
+                        <tr><td><b>Таблица</b></td><td>Двумерная структура: группировки строк + группировки колонок</td><td>Строки: Номенклатура, Колонки: Месяцы, Значения: Сумма продаж</td></tr>
+                        <tr><td><b>Диаграмма</b></td><td>Визуальное представление данных в виде графика</td><td>Гистограмма продаж по месяцам</td></tr>
+                        <tr><td><b>Отбор</b></td><td>Фильтрация данных по условиям. Может быть на уровне схемы или пользовательским</td><td>Организация = "Основная", Сумма > 1000</td></tr>
+                        <tr><td><b>Сортировка</b></td><td>Упорядочивание строк по полям (возрастание/убывание)</td><td>Сортировка по Сумме (убывание)</td></tr>
+                        <tr><td><b>Условное оформление</b></td><td>Автоматическое изменение внешнего вида ячеек по условию</td><td>Если Сумма < 0 — красный фон, жирный шрифт</td></tr>
+                        <tr><td><b>Пользовательские поля</b></td><td>Поля, создаваемые пользователем в режиме предприятия</td><td>Пользователь добавляет вычисляемое поле «Маржа»</td></tr>
+                    </table>
+
+                    <h3>📊 Параметры и макеты</h3>
+                    <table class="info-table">
+                        <tr><th>Элемент</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Параметры данных</b></td><td>Внешние значения, передаваемые в отчёт. Могут иметь тип, доступное значение, ограничение</td><td>НачалоПериода (Дата), КонецПериода (Дата), Организация (СправочникСсылка)</td></tr>
+                        <tr><td><b>Параметры виртуальных таблиц</b></td><td>Параметры, которые передаются в виртуальные таблицы регистров</td><td>Период для СрезПоследних, НачалоПериода/КонецПериода для Обороты</td></tr>
+                        <tr><td><b>Макеты оформления</b></td><td>Готовые шаблоны внешнего вида отчёта (зелёный, синий, яркий и т.д.)</td><td>Макет «Основной» — стандартное оформление 1С</td></tr>
+                        <tr><td><b>Макет полей</b></td><td>Настройка ширины колонок, формата чисел, представления полей</td><td>Сумма — формат ЧЦ=15; ЧДЦ=2</td></tr>
+                    </table>
+
+                    <h3>📊 Варианты настроек</h3>
+                    <table class="info-table">
+                        <tr><th>Вид варианта</th><th>Описание</th></tr>
+                        <tr><td><b>Настройки по умолчанию</b></td><td>Базовые настройки, которые загружаются при открытии отчёта. Задаются разработчиком в конфигураторе</td></tr>
+                        <tr><td><b>Пользовательские настройки</b></td><td>Настройки, которые пользователь меняет в режиме 1С:Предприятие. Сохраняются автоматически или вручную</td></tr>
+                        <tr><td><b>Варианты отчёта</b></td><td>Несколько предустановленных наборов настроек в одной схеме. Пользователь переключается между ними</td></tr>
+                        <tr><td><b>Быстрые настройки</b></td><td>Часто используемые параметры и отборы, вынесенные на панель быстрого доступа</td></tr>
+                    </table>
+
+                    <h3>📊 Иерархия в СКД</h3>
+                    <table class="info-table">
+                        <tr><th>Механизм</th><th>Описание</th></tr>
+                        <tr><td><b>Иерархическая группировка</b></td><td>При группировке по иерархическому справочнику СКД автоматически строит многоуровневую структуру (группы → элементы)</td></tr>
+                        <tr><td><b>Роль «Родитель»</b></td><td>Позволяет выводить иерархию в плоском виде с отступами или в древовидном виде</td></tr>
+                        <tr><td><b>Роль «Итог по иерархии»</b></td><td>Определяет, как считать итоги для групп (обычно сумма элементов группы)</td></tr>
+                        <tr><td><b>Расшифровка</b></td><td>При двойном клике на ячейку можно открыть детальный отчёт или объект. Настраивается через обработку расшифровки</td></tr>
+                    </table>
+
+                    <h3>📝 Программная работа с СКД</h3>
+                    <div class="code-block">
+// 1. Создание схемы программно
+Схема = Новый СхемаКомпоновкиДанных;
+
+// Добавляем набор данных
+Набор = Схема.НаборыДанных.Добавить(Тип("НаборДанныхЗапросСхемыКомпоновкиДанных"));
+Набор.Имя = "Продажи";
+Набор.Запрос = 
+    "ВЫБРАТЬ
+    |   Продажи.Номенклатура,
+    |   Продажи.КоличествоОборот,
+    |   Продажи.СуммаОборот
+    |ИЗ
+    |   РегистрНакопления.Продажи.Обороты(&Начало, &Конец) КАК Продажи";
+
+// Добавляем ресурс
+ПолеРесурса = Схема.ПоляИтога.Добавить();
+ПолеРесурса.ПутьКДанным = "Продажи.СуммаОборот";
+ПолеРесурса.Выражение = "Сумма(СуммаОборот)";
+
+// 2. Инициализация компоновщика
+Компоновщик = Новый КомпоновщикНастроекКомпоновкиДанных;
+Компоновщик.Инициализировать(Новый ИсточникДоступныхНастроекКомпоновкиДанных(Схема));
+
+// Устанавливаем параметры
+Компоновщик.Настройки.ПараметрыДанных.УстановитьЗначениеПараметра("Начало", НачалоМесяца(ТекущаяДата()));
+Компоновщик.Настройки.ПараметрыДанных.УстановитьЗначениеПараметра("Конец", КонецМесяца(ТекущаяДата()));
+
+// Добавляем группировку
+Группировка = Компоновщик.Настройки.Структура.Добавить(Тип("ГруппировкаКомпоновкиДанных"));
+Группировка.Использование = Истина;
+ПолеГруппировки = Группировка.ПоляГруппировки.Элементы.Добавить(Тип("ПолеГруппировкиКомпоновкиДанных"));
+ПолеГруппировки.Поле = Новый ПолеКомпоновкиДанных("Номенклатура");
+
+// 3. Выполнение
+Процессор = Новый ПроцессорКомпоновкиДанных;
+Процессор.Инициализировать(Схема, Компоновщик.Настройки);
+
+// 4. Вывод
+ТабДок = Новый ТабличныйДокумент;
+Вывод = Новый ПроцессорВыводаРезультатаКомпоновкиДанныхВТабличныйДокумент;
+Вывод.УстановитьДокумент(ТабДок);
+Вывод.Вывести(Процессор);
+                    </div>
+
+                    <h3>📊 Типичные ошибки в СКД</h3>
+                    <table class="info-table">
+                        <tr><th>Ошибка</th><th>Причина</th><th>Решение</th></tr>
+                        <tr><td>«Поле не найдено»</td><td>В запросе есть поле, которого нет в выбранных полях набора данных</td><td>Добавить поле в список полей набора данных</td></tr>
+                        <tr><td>«Циклическая ссылка»</td><td>Вычисляемое поле ссылается само на себя или через цепочку других полей</td><td>Проверить формулы вычисляемых полей</td></tr>
+                        <tr><td>Долгое выполнение</td><td>Нет параметров у виртуальных таблиц, большое количество связей</td><td>Передать параметры в виртуальные таблицы, упростить связи</td></tr>
+                        <tr><td>Не совпадают итоги</td><td>Неправильно настроены ресурсы или роли полей</td><td>Проверить агрегатные функции ресурсов, роль «Итог по иерархии»</td></tr>
+                    </table>
+
+                    <div class="tip">СКД — это мощнейший инструмент. 80% отчётов в типовых конфигурациях сделаны на СКД без единой строки кода. Освойте конструктор СКД — и вы сможете создавать сложные отчёты за минуты. Ключевое правило: данные готовятся в запросе, а СКД только их красиво показывает.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Объединение vs Соединение -->
+        <div class="card" data-category="регистры" id="accumulation-details" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-icon c9">🔀</div>
+                <div class="card-title-group">
+                    <div class="card-title">Объединение vs Соединение</div>
+                    <div class="card-super-short">Соединение «растягивает» строки вширь (добавляет колонки), Объединение «склеивает» таблицы вниз (добавляет строки). Разные задачи — разные операторы.</div>
+                </div>
+                <div class="card-arrow">▼</div>
+            </div>
+            <div class="card-body">
+                <div class="card-short">
+                    <b>Соединение</b> работает по горизонтали: берёт строку из одной таблицы и добавляет к ней колонки из другой по условию. <b>Объединение</b> работает по вертикали: берёт результаты двух запросов и складывает их в одну таблицу. Объединение требует одинаковое количество и типы колонок в обоих запросах. <b>ОБЪЕДИНИТЬ</b> удаляет дубликаты, <b>ОБЪЕДИНИТЬ ВСЕ</b> — нет.
+                </div>
+                <div class="card-full">
+                    <h3>📊 Отличия</h3>
+                    <table class="info-table">
+                        <tr><th>Параметр</th><th>Соединение (JOIN)</th><th>Объединение (UNION)</th></tr>
+                        <tr><td>Направление</td><td>Вширь — добавляет колонки</td><td>Вниз — добавляет строки</td></tr>
+                        <tr><td>Таблицы</td><td>Работает с таблицами-источниками</td><td>Работает с результатами запросов</td></tr>
+                        <tr><td>Условие</td><td>Требуется ПО (условие связи)</td><td>Условия связи не нужны</td></tr>
+                        <tr><td>Колонки</td><td>Могут отличаться</td><td>Должны совпадать по количеству и типам</td></tr>
+                        <tr><td>Дубликаты</td><td>Сохраняются все строки</td><td>ОБЪЕДИНИТЬ — удаляет, ОБЪЕДИНИТЬ ВСЕ — сохраняет</td></tr>
+                        <tr><td>Пример задачи</td><td>Номенклатура + цены + остатки в одной строке</td><td>Список приходов + список расходов = общий список движений</td></tr>
+                    </table>
+                    <h3>📝 Примеры</h3>
+                    <div class="code-block">
+// СОЕДИНЕНИЕ — одна строка, много колонок
+ВЫБРАТЬ
+    Ном.Наименование,
+    Ост.Количество,
+    Цен.Цена
+ИЗ Справочник.Номенклатура КАК Ном
+    ЛЕВОЕ СОЕДИНЕНИЕ Регистр.Остатки КАК Ост ПО Ном.Ссылка = Ост.Номенклатура
+    ЛЕВОЕ СОЕДИНЕНИЕ Регистр.Цены КАК Цен ПО Ном.Ссылка = Цен.Номенклатура;
+
+// ОБЪЕДИНЕНИЕ — много строк, одни колонки
+ВЫБРАТЬ Номенклатура, Количество, "Приход" КАК ВидДвижения
+ИЗ Документ.Поступление.Товары
+
+ОБЪЕДИНИТЬ ВСЕ
+
+ВЫБРАТЬ Номенклатура, Количество, "Расход"
+ИЗ Документ.Реализация.Товары;
+                    </div>
+                    <div class="tip">Запомни: Соединение = JOIN (колонки), Объединение = UNION (строки). Если нужно «сцепить» таблицы по полю — соединение. Если нужно «сложить» результаты двух запросов — объединение.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== СКД ==================== -->
+        <div class="section-title" onclick="toggleSection(this)">📊 Система компоновки данных (СКД)</div>
+
+        <!-- СКД -->
+        
+
+        <!-- Регистр накопления детали -->
+        <div class="card" data-category="регистры" id="calculation-plans" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-icon c11">📦</div>
+                <div class="card-title-group">
+                    <div class="card-title">Регистр накопления: детали</div>
+                    <div class="card-super-short">Заполнение, виды, структура, способы записи, оперативное/неоперативное проведение, блокировки, партионный учёт.</div>
+                </div>
+                <div class="card-arrow">▼</div>
+            </div>
+            <div class="card-body">
+                <div class="card-short">
+                    Регистр накопления хранит движения ресурсов с разделением на <b>приход</b> и <b>расход</b>. Существуют два вида: <b>остатки</b> (учитывают приход/расход, позволяют получить остаток) и <b>обороты</b> (только обороты без остатков). Движения формируются документом-регистратором в процедуре ОбработкаПроведения. Запись может быть <b>оперативной</b> (по текущей дате) или <b>неоперативной</b> (задним числом).
+                </div>
+                <div class="card-full">
+                    <h3>📊 Виды регистров накопления</h3>
+                    <table class="info-table">
+                        <tr><th>Вид</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Остатки</b></td><td>Учитывает приход (+) и расход (−). Позволяет получить остаток на дату</td><td>ТоварыНаСкладах, ДенежныеСредства</td></tr>
+                        <tr><td><b>Обороты</b></td><td>Учитывает только обороты (приход и расход как положительные значения). Остаток не рассчитывается</td><td>ВыручкаИСебестоимостьПродаж, ЗаказыПоставщикам</td></tr>
+                    </table>
+
+                    <h3>📊 Структура простейшего регистра</h3>
+                    <table class="info-table">
+                        <tr><th>Элемент</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Измерения</b></td><td>Разрезы учёта (аналитика)</td><td>Номенклатура, Склад, Организация</td></tr>
+                        <tr><td><b>Ресурсы</b></td><td>Количественные показатели (числа)</td><td>Количество, Сумма</td></tr>
+                        <tr><td><b>Реквизиты</b></td><td>Дополнительная информация (не участвует в расчёте остатков)</td><td>Контрагент, ДокументОснование</td></tr>
+                        <tr><td><b>Регистратор</b></td><td>Документ, который создаёт движения</td><td>ПоступлениеТоваров, РеализацияТоваров</td></tr>
+                        <tr><td><b>Период</b></td><td>Дата движения (берётся из документа-регистратора)</td><td>Дата документа</td></tr>
+                    </table>
+
+                    <h3>📊 Способы записи движений</h3>
+                    <table class="info-table">
+                        <tr><th>Способ</th><th>Описание</th><th>Когда использовать</th></tr>
+                        <tr><td><b>Через документ (проведение)</b></td><td>В процедуре ОбработкаПроведения документа заполняется коллекция Движения</td><td>Стандартный способ. Движения создаются при проведении</td></tr>
+                        <tr><td><b>Набор записей (программно)</b></td><td>Создание набора записей регистра и запись через Записать()</td><td>Корректировка движений, загрузка из внешних источников, служебные операции</td></tr>
+                        <tr><td><b>Через документ-регистратор (ручная запись)</b></td><td>Документ имеет таблицу движений, которую можно редактировать</td><td>Редко — в специальных документах корректировки</td></tr>
+                    </table>
+
+                    <h3>📊 Оперативное и неоперативное проведение</h3>
+                    <table class="info-table">
+                        <tr><th>Тип</th><th>Описание</th><th>Особенности</th></tr>
+                        <tr><td><b>Оперативное</b></td><td>Дата документа >= текущей даты сеанса (или в пределах оперативного дня)</td><td>Проверяет остатки на момент проведения. Если остаток отрицательный — может отказать в проведении</td></tr>
+                        <tr><td><b>Неоперативное</b></td><td>Дата документа < текущей даты (задним числом)</td><td>Не контролирует остатки в момент проведения, но пересчитывает все последующие движения</td></tr>
+                    </table>
+
+                    <h3>📊 Безусловное и обусловленное проведение</h3>
+                    <table class="info-table">
+                        <tr><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><b>Безусловное</b></td><td>Документ всегда формирует движения по регистру при проведении (если нет ошибок)</td></tr>
+                        <tr><td><b>Обусловленное</b></td><td>Движения формируются только при выполнении условий (например, только если вид операции = "Продажа", а не "Возврат")</td></tr>
+                    </table>
+
+                    <h3>📊 Управляемая блокировка</h3>
+                    <table class="info-table">
+                        <tr><th>Концепция</th><th>Описание</th></tr>
+                        <tr><td><b>Проблема</b></td><td>При одновременном проведении нескольких документов возможны «минусы» (отрицательные остатки) или взаимные блокировки</td></tr>
+                        <tr><td><b>Решение</b></td><td>Управляемые блокировки (БлокировкаДанных) — явное указание, какие данные нужно заблокировать на время транзакции</td></tr>
+                        <tr><td><b>Режимы</b></td><td>РежимБлокировкиДанных.Исключительный (запрещает чтение и запись) / Разделяемый (запрещает только запись)</td></tr>
+                    </table>
+
+                    <h3>📊 Партионный учёт</h3>
+                    <table class="info-table">
+                        <tr><th>Параметр</th><th>Описание</th></tr>
+                        <tr><td>Назначение</td><td>Учёт товаров по партиям (поставкам) для точного расчёта себестоимости</td></tr>
+                        <tr><td>Измерение</td><td>В регистре добавляется измерение «Партия» (ссылка на документ поступления)</td></tr>
+                        <tr><td><b>Методы списания</b></td><td>FIFO (первой пришёл — первой ушёл), LIFO, По средней, По себестоимости конкретной партии</td></tr>
+                        <tr><td>Реализация</td><td>Документ списания ищет остатки по партиям и списывает по выбранному методу</td></tr>
+                    </table>
+
+                    <h3>📝 Пример: управляемая блокировка</h3>
+                    <div class="code-block">
+Процедура ОбработкаПроведения(Отказ, Режим)
+    // Устанавливаем блокировку на остатки по нужным складам
+    Блокировка = Новый БлокировкаДанных;
+    Элемент = Блокировка.Добавить("РегистрНакопления.ТоварыНаСкладах");
+    Элемент.Режим = РежимБлокировкиДанных.Исключительный;
+    Элемент.УстановитьЗначение("Склад", Склад);
+    Блокировка.Заблокировать();
+
+    // Теперь можно безопасно читать остатки и формировать движения
+    // ...
+КонецПроцедуры;
+                    </div>
+                    <div class="tip">Всегда используйте управляемые блокировки при проведении документов, которые контролируют остатки. Это предотвращает «минусы» и взаимоблокировки в многопользовательской среде.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- План счетов -->
+        <div class="card" data-category="сравнения" id="compare-registers" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-icon c12">⚖️</div>
+                <div class="card-title-group">
+                    <div class="card-title">План счетов и регистр бухгалтерии</div>
+                    <div class="card-super-short">План счетов определяет структуру бухгалтерских счетов, их иерархию, признаки (валютный, количественный), субконто. Регистр бухгалтерии хранит проводки.</div>
+                </div>
+                <div class="card-arrow">▼</div>
+            </div>
+            <div class="card-body">
+                <div class="card-short">
+                    <b>План счетов</b> — это иерархический справочник, определяющий все счета, по которым ведётся бухгалтерский учёт. Каждый счёт имеет код, наименование, признаки (валютный, количественный, забалансовый) и список <b>видов субконто</b> (аналитика). <b>Регистр бухгалтерии</b> хранит проводки — корреспонденции Дт/Кт между счетами. Запись движений происходит через коллекцию Движения документа, чтение — через виртуальные таблицы Остатки, Обороты, ОборотыДтКт.
+                </div>
+                <div class="card-full">
+                    <h3>📊 Свойства счёта в плане счетов</h3>
+                    <table class="info-table">
+                        <tr><th>Свойство</th><th>Описание</th></tr>
+                        <tr><td><b>Код</b></td><td>Уникальный код счёта (01, 41, 62.01 и т.д.)</td></tr>
+                        <tr><td><b>Наименование</b></td><td>Наименование счёта («Основные средства», «Товары»)</td></tr>
+                        <tr><td><b>Родитель</b></td><td>Иерархия счетов (синтетические/субсчета)</td></tr>
+                        <tr><td><b>Вид счёта</b></td><td>Активный, Пассивный, Активно-пассивный — влияет на знак остатка</td></tr>
+                        <tr><td><b>Валютный</b></td><td>Может ли счёт иметь валютную сумму</td></tr>
+                        <tr><td><b>Количественный</b></td><td>Может ли счёт иметь количественный учёт</td></tr>
+                        <tr><td><b>Виды субконто</b></td><td>Список аналитических разрезов (до 3-х на счёт)</td></tr>
+                        <tr><td><b>Учёт по подразделениям</b></td><td>Ведётся ли учёт по подразделениям</td></tr>
+                    </table>
+
+                    <h3>📊 Запись движений регистра бухгалтерии</h3>
+                    <div class="code-block">
+Процедура ОбработкаПроведения(Отказ, Режим)
+    Движения.Хозрасчетный.Записывать = Истина;
+
+    // Проводка: Дт 41 — Кт 60
+    Проводка = Движения.Хозрасчетный.Добавить();
+    Проводка.СчетДт = ПланыСчетов.Хозрасчетный.Товары;
+    Проводка.СчетКт = ПланыСчетов.Хозрасчетный.РасчетыСПоставщиками;
+    Проводка.СубконтоДт[ПланыВидовХарактеристик.ВидыСубконто.Номенклатура] = Номенклатура;
+    Проводка.СубконтоКт[ПланыВидовХарактеристик.ВидыСубконто.Контрагенты] = Контрагент;
+    Проводка.Сумма = Сумма;
+КонецПроцедуры;
+                    </div>
+
+                    <h3>📊 Чтение данных регистра бухгалтерии</h3>
+                    <table class="info-table">
+                        <tr><th>Виртуальная таблица</th><th>Что возвращает</th></tr>
+                        <tr><td><b>Остатки</b></td><td>Остатки по счетам на дату (раздельно Дт и Кт)</td></tr>
+                        <tr><td><b>Обороты</b></td><td>Обороты за период (раздельно Дт и Кт)</td></tr>
+                        <tr><td><b>ОборотыДтКт</b></td><td>Корреспонденции: какой счёт Дт, какой Кт, сумма</td></tr>
+                        <tr><td><b>ОстаткиИОбороты</b></td><td>Остатки на начало, обороты, остатки на конец</td></tr>
+                    </table>
+                    <div class="tip">План счетов — «сердце» бухгалтерии. Все проводки строго привязаны к счетам плана. Изменение плана счетов (добавление/удаление счетов) — серьёзная операция, требующая перепроведения документов.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Планы видов расчета и регистр расчета -->
+        <div class="card" data-category="сравнения" id="compare-collections" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-icon c1">🧮</div>
+                <div class="card-title-group">
+                    <div class="card-title">Планы видов расчёта и регистры расчёта</div>
+                    <div class="card-super-short">ПВР определяет виды начислений (оклад, премия, больничный) с формулами и зависимостями. Регистр расчёта хранит результаты периодических расчётов.</div>
+                </div>
+                <div class="card-arrow">▼</div>
+            </div>
+            <div class="card-body">
+                <div class="card-short">
+                    <b>План видов расчёта (ПВР)</b> — справочник, описывающий все виды начислений и удержаний: оклад, премия, больничный, отпускные, НДФЛ. Каждый вид имеет <b>формулу</b>, <b>базовые виды</b> (от чего зависит), <b>ведущие виды</b> (что влияет на перерасчёт) и <b>вытесняющие виды</b> (что прерывает действие). <b>Регистр расчёта</b> хранит результат расчёта каждого вида для каждого сотрудника за период.
+                </div>
+                <div class="card-full">
+                    <h3>📊 Основные понятия периодических расчётов</h3>
+                    <table class="info-table">
+                        <tr><th>Понятие</th><th>Описание</th><th>Пример</th></tr>
+                        <tr><td><b>Период регистрации</b></td><td>Месяц, в котором выполняется расчёт (когда начисляем зарплату)</td><td>Ноябрь 2024</td></tr>
+                        <tr><td><b>Период действия</b></td><td>Месяц, за который начисляется сумма (какой период оплачиваем)</td><td>Октябрь 2024 (перерасчёт)</td></tr>
+                        <tr><td><b>Базовые виды расчёта</b></td><td>Виды, от которых зависит текущий расчёт (формула ссылается на них)</td><td>Премия = Оклад * 20%. Оклад — базовый для Премии</td></tr>
+                        <tr><td><b>Ведущие виды</b></td><td>Виды, изменение которых требует перерасчёта текущего</td><td>Если изменился Оклад — нужно пересчитать Премию</td></tr>
+                        <tr><td><b>Вытесняющие виды</b></td><td>Виды, которые прерывают действие другого вида в те же дни</td><td>Больничный вытесняет Оклад (не платим оклад за дни больничного)</td></tr>
+                        <tr><td><b>Перерасчёт</b></td><td>Автоматическое определение записей, которые нужно пересчитать</td><td>Изменился оклад в прошлом месяце → пересчитать премию и НДФЛ</td></tr>
+                    </table>
+
+                    <h3>📊 Структура регистра расчёта</h3>
+                    <table class="info-table">
+                        <tr><th>Элемент</th><th>Описание</th></tr>
+                        <tr><td><b>Вид расчёта</b></td><td>Ссылка на план видов расчёта (Оклад, Премия, Больничный)</td></tr>
+                        <tr><td><b>Измерения</b></td><td>Сотрудник, Организация (разрезы учёта)</td></tr>
+                        <tr><td><b>Ресурсы</b></td><td>Результат (сумма), ОтработаноДней, ОтработаноЧасов</td></tr>
+                        <tr><td><b>Реквизиты</b></td><td>Дополнительные данные (процент премии, ставка)</td></tr>
+                        <tr><td><b>Период регистрации</b></td><td>Месяц начисления</td></tr>
+                        <tr><td><b>Период действия</b></td><td>Месяц, за который оплачиваем</td></tr>
+                        <tr><td><b>Базовый период</b></td><td>Период, за который берутся базовые данные для формулы</td></tr>
+                    </table>
+
+                    <h3>📝 Пример: зависимости видов расчёта</h3>
+                    <div class="code-block">
+// В ПВР настроено:
+// - Оклад: нет базы, нет вытеснения
+// - Премия: база = Оклад, формула = База * 0.2
+// - Больничный: вытесняет Оклад, база = СреднийЗаработок
+// - НДФЛ: база = Оклад + Премия, формула = База * 0.13
+
+// При изменении Оклад за прошлый месяц:
+// Система автоматически создаёт записи перерасчёта для:
+// - Премия (зависит от Оклада)
+// - НДФЛ (зависит от Оклада и Премии)
+                    </div>
+                    <div class="tip">Механизм ПВР + Регистр расчёта — это «конструктор» для зарплаты. Он автоматически отслеживает цепочки зависимостей: изменилось одно начисление → система знает, что нужно пересчитать все зависимые. Это избавляет от ручного пересчёта при retroactive изменениях.</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         function toggleCard(card) {
             const isExpanded = card.classList.contains('expanded');
             document.querySelectorAll('.card').forEach(c => { c.classList.remove('expanded'); });
-            if (!isExpanded) { card.classList.add('expanded'); }
+            if (!isExpanded) { 
+                card.classList.add('expanded');
+                // Плавная прокрутка к открытой карточке
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        function filterCards() {
+            const query = document.getElementById('searchBox').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            let visibleCount = 0;
+
+            // Сбросить активные категории
+            document.querySelectorAll('.nav-tag').forEach(t => t.classList.remove('active'));
+            document.querySelector('.nav-tag:first-child').classList.add('active');
+
+            cards.forEach(card => {
+                const text = (card.innerText || card.textContent).toLowerCase();
+                if (text.includes(query)) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('show', visibleCount === 0 && query !== '');
+        }
+
+        function filterCategory(cat, btn) {
+            document.querySelectorAll('.nav-tag').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('searchBox').value = '';
+            const cards = document.querySelectorAll('.card');
+            let visibleCount = 0;
+            cards.forEach(card => {
+                if (cat === 'all' || card.dataset.category === cat) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            document.getElementById('noResults').classList.toggle('show', visibleCount === 0);
+            const firstVisible = document.querySelector('.card:not(.hidden)');
+            if (firstVisible) {
+                firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleSection(title) {
+            // Собираем все карточки, которые идут ПОСЛЕ данного section-title и ДО следующего
+            let sectionCards = [];
+            let next = title.nextElementSibling;
+
+            while (next && !next.classList.contains('section-title')) {
+                if (next.classList.contains('card')) {
+                    sectionCards.push(next);
+                }
+                next = next.nextElementSibling;
+            }
+
+            if (sectionCards.length === 0) return;
+
+            const anyExpanded = sectionCards.some(c => c.classList.contains('expanded'));
+
+            if (anyExpanded) {
+                // Свернуть все карточки раздела
+                sectionCards.forEach(c => c.classList.remove('expanded'));
+                title.classList.remove('expanded');
+            } else {
+                // Сначала свернуть ВСЕ карточки на странице
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('expanded'));
+                document.querySelectorAll('.section-title').forEach(s => s.classList.remove('expanded'));
+
+                // Показать скрытые карточки этого раздела
+                sectionCards.forEach(c => {
+                    c.classList.remove('hidden');
+                    c.classList.add('expanded');
+                });
+                title.classList.add('expanded');
+
+                setTimeout(() => {
+                    title.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
         }
     </script>
 </body>
 </html>
- 
