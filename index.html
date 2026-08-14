@@ -1073,7 +1073,6 @@
             document.querySelectorAll('.card').forEach(c => c.classList.remove('expanded'));
             if (!isExpanded) { 
                 card.classList.add('expanded');
-                setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
             }
             updateFocusableElements();
             const idx = focusableElements.findIndex(item => item.el === card);
@@ -1101,7 +1100,7 @@
                 document.querySelectorAll('.section-title').forEach(s => s.classList.remove('expanded'));
                 sectionCards.forEach(c => { c.classList.remove('hidden'); c.classList.add('expanded'); });
                 title.classList.add('expanded');
-                setTimeout(() => title.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                
             }
             updateFocusableElements();
         }
