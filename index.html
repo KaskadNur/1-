@@ -163,6 +163,18 @@
             line-height: 1.5; border: 1px solid #21262d;
         }
 
+        .xref {
+            color: #58a6ff;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(88,166,255,0.5);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .xref:hover {
+            color: #79c0ff;
+            border-bottom-style: solid;
+        }
+
         .no-results {
             text-align: center; padding: 40px; color: #484f58;
             font-size: 0.9rem; display: none;
@@ -210,8 +222,6 @@
             .code-block { font-size: 0.68rem; }
         }
     </style>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
     <div class="container">
@@ -634,7 +644,7 @@
                     <table class="info-table">
                         <tr><th>Категория</th><th>Примеры</th></tr>
                         <tr><td>Общие</td><td>Роли, Подсистемы, Общие модули, Планы обмена, Web/HTTP-сервисы</td></tr>
-                        <tr><td>Прикладные</td><td>Справочники, Документы, Регистры, ПВХ, Планы счетов, Перечисления, Константы</td></tr>
+                        <tr><td>Прикладные</td><td><a href="#card-spravochniki" class="xref">Справочники</a>, Документы, Регистры, ПВХ, <a href="#card-plany-schetov" class="xref">Планы счетов</a>, Перечисления, Константы</td></tr>
                         <tr><td>Подчинённые</td><td>Реквизиты, Табличные части, Формы, Макеты, Команды, Движения</td></tr>
                     </table>
                     <div class="tip">Прикладные — то, что видит пользователь. Общие — работают «под капотом».</div>
@@ -668,7 +678,7 @@
             </div>
         </div>
 
-        <div class="card" data-category="объекты" tabindex="0">
+        <div class="card" data-category="объекты" tabindex="0" id="card-spravochniki">
             <div class="card-header">
                 <div class="card-icon c12">📁</div>
                 <div class="card-title-group">
@@ -842,28 +852,44 @@
             </div>
         </div>
 
-        <div class="card" data-category="объекты" tabindex="0">
+        <div class="card" data-category="объекты" tabindex="0" id="card-plany-schetov">
             <div class="card-header">
                 <div class="card-icon c6">📊</div>
                 <div class="card-title-group">
                     <div class="card-title">Планы счетов</div>
-                    <div class="card-super-short">Иерархия счетов, признаки учёта (количественный, валютный), субконто, предопределённые счета.</div>
+                    <div class="card-super-short">Отдельный вид объекта под бухгалтерский учёт: 3 вида счёта, признаки учёта, субконто, предопределённые счета.</div>
                 </div>
                 <div class="card-arrow">▼</div>
             </div>
             <div class="card-body">
                 <div class="card-short">
-                    План счетов определяет <b>структуру бухгалтерского учёта</b>: счета, их иерархию, признаки учёта (количественный, валютный, субсчета), состав субконто. Используется в регистре бухгалтерии. Счета могут быть <b>предопределёнными</b> (в конфигураторе) или созданными пользователем.
+                    План счетов — это <b>отдельный вид объекта конфигурации</b>, сделанный под бухгалтерский учёт. Внешне похож на <a href="#card-spravochniki" class="xref">справочник</a>, но настроек больше: вид счёта, признаки учёта, субконто. Отличия от справочника: <b>нет автонумерации</b>, реквизит <b>Порядок</b> — это код, <b>упорядочивание по коду</b>. У счёта один из <b>трёх видов</b>: Активный, Пассивный или Активно-Пассивный. Используется в <a href="#card-reg-buh" class="xref">регистре бухгалтерии</a>. Счета могут быть <b>предопределёнными</b> (в конфигураторе) или созданными пользователем.
                 </div>
                 <div class="card-full">
+                    <table class="info-table">
+                        <tr><th>Особенность</th><th>Справочник</th><th>План счетов</th></tr>
+                        <tr><td>Назначение</td><td>Универсальные списки</td><td>Только бухгалтерский учёт</td></tr>
+                        <tr><td>Автонумерация</td><td>Есть</td><td>Нет</td></tr>
+                        <tr><td>Порядок</td><td>Служебный реквизит</td><td>Порядок = код счёта</td></tr>
+                        <tr><td>Упорядочивание</td><td>По коду / наименованию</td><td>По коду (порядку)</td></tr>
+                        <tr><td>Настроек</td><td>Меньше</td><td>Больше: вид счёта, признаки учёта, субконто</td></tr>
+                    </table>
+                    <h3>Свойства счёта</h3>
                     <table class="info-table">
                         <tr><th>Свойство</th><th>Описание</th></tr>
                         <tr><td>Код</td><td>Уникальный код счёта (41, 41.01, 62.01)</td></tr>
                         <tr><td>Наименование</td><td>Название счёта</td></tr>
                         <tr><td>Родитель</td><td>Вышестоящий счёт (иерархия)</td></tr>
-                        <tr><td>Вид</td><td>Активный, Пассивный, Активно/Пассивный</td></tr>
+                        <tr><td>Вид</td><td>Активный, Пассивный, Активно-Пассивный</td></tr>
                         <tr><td>Признаки учёта</td><td>Количественный, Валютный, Субсчета</td></tr>
                         <tr><td>Субконто</td><td>Виды аналитики на счёте (номенклатура, контрагент)</td></tr>
+                    </table>
+                    <h3>Три вида счёта</h3>
+                    <table class="info-table">
+                        <tr><th>Вид</th><th>Смысл</th><th>Пример</th></tr>
+                        <tr><td>Активный</td><td>Остаток только по дебету (что имеем)</td><td>41 «Товары», 50 «Касса»</td></tr>
+                        <tr><td>Пассивный</td><td>Остаток только по кредиту (откуда взялось)</td><td>60 «Расчёты с поставщиками»</td></tr>
+                        <tr><td>Активно-Пассивный</td><td>Остаток и по дебету, и по кредиту</td><td>62 «Расчёты с покупателями», 76</td></tr>
                     </table>
                     <div class="code-block">
 // Доступ к плану счетов
@@ -878,7 +904,7 @@
 // Получение субконто
 ВидыСубконто = Счет.ВидыСубконто;
                     </div>
-                    <div class="tip">План счетов — основа бухгалтерского учёта. Изучи его структуру перед работой с регистром бухгалтерии.</div>
+                    <div class="tip">План счетов — основа бухгалтерского учёта. Изучи его структуру перед работой с <a href="#card-reg-buh" class="xref">регистром бухгалтерии</a>.</div>
                 </div>
             </div>
         </div>
@@ -1053,7 +1079,7 @@
             </div>
         </div>
 
-        <div class="card" data-category="регистры" tabindex="0">
+        <div class="card" data-category="регистры" tabindex="0" id="card-reg-buh">
             <div class="card-header">
                 <div class="card-icon c10">⚖️</div>
                 <div class="card-title-group">
@@ -1064,12 +1090,12 @@
             </div>
             <div class="card-body">
                 <div class="card-short">
-                    Реализует <b>принцип двойной записи</b>: каждая операция отражается по дебету одного счёта и кредиту другого. Имеет <b>план счетов</b>, <b>субконто</b> (аналитика на счёте), поддерживает <b>многовалютный</b> и <b>количественный</b> учёт.
+                    Реализует <b>принцип двойной записи</b>: каждая операция отражается по дебету одного счёта и кредиту другого. Имеет <a href="#card-plany-schetov" class="xref"><b>план счетов</b></a>, <b>субконто</b> (аналитика на счёте), поддерживает <b>многовалютный</b> и <b>количественный</b> учёт.
                 </div>
                 <div class="card-full">
                     <table class="info-table">
                         <tr><th>Элемент</th><th>Описание</th></tr>
-                        <tr><td>План счетов</td><td>Определяет структуру счетов, субконто, признаки учёта</td></tr>
+                        <tr><td><a href="#card-plany-schetov" class="xref">План счетов</a></td><td>Определяет структуру счетов, субконто, признаки учёта</td></tr>
                         <tr><td>Субконто</td><td>Аналитика на счёте (номенклатура, контрагент, договор)</td></tr>
                         <tr><td>Корреспонденция</td><td>Каждая запись имеет Дт и Кт счета</td></tr>
                         <tr><td>Вирт. таблицы</td><td>Остатки, Обороты, ОстаткиИОбороты, ДвиженияССубконто, ОборотыДтКт</td></tr>
@@ -1093,7 +1119,7 @@
 ИЗ
     РегистрБухгалтерии.Хозрасчетный.Остатки(&Период, Счет = &Счет) КАК ХозрасчетныйОстатки
                     </div>
-                    <div class="tip">Регистр бухгалтерии — самый сложный вид регистра. Изучи план счетов и субконто перед использованием.</div>
+                    <div class="tip">Регистр бухгалтерии — самый сложный вид регистра. Изучи <a href="#card-plany-schetov" class="xref">план счетов</a> и субконто перед использованием.</div>
                 </div>
             </div>
         </div>
@@ -1173,7 +1199,7 @@
     // Использует базовый период
 КонецЕсли;
                     </div>
-                    <div class="tip">ПВР — аналог плана счетов, но для зарплаты. Настраивает логику взаимодействия видов расчётов.</div>
+                    <div class="tip">ПВР — аналог <a href="#card-plany-schetov" class="xref">плана счетов</a>, но для зарплаты. Настраивает логику взаимодействия видов расчётов.</div>
                 </div>
             </div>
         </div>
@@ -1718,6 +1744,33 @@
 
         // Поиск при вводе
         document.getElementById('searchBox').addEventListener('input', filterCards);
+
+        // === ПЕРЕКРЁСТНЫЕ ССЫЛКИ ===
+        document.querySelectorAll('.xref').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (!target) return;
+                // Сбросить фильтры, чтобы карточка точно была видна
+                document.getElementById('searchBox').value = '';
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                document.querySelector('.tag:first-child').classList.add('active');
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('hidden'));
+                document.getElementById('noResults').classList.remove('show');
+                // Раскрыть целевую карточку и прокрутить к ней
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('expanded'));
+                target.classList.add('expanded');
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                updateFocusableElements();
+                const idx = focusableElements.findIndex(item => item.el === target);
+                if (idx !== -1) {
+                    focusedIndex = idx;
+                    document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+                    target.classList.add('focused');
+                }
+            });
+        });
 
         // === КЛАВИАТУРА ===
         document.addEventListener('keydown', function(e) {
